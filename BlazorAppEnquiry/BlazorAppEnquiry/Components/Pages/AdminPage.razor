@@ -1,0 +1,88 @@
+﻿@page "/admin"
+@using BlazorAppEnquiry.Models
+@using BlazorAppEnquiry.Data
+@inject BlazorAppEnquiry.Services.EnquiryService EnquiryService
+@inject NavigationManager Navigation
+@inject BlazorAppEnquiry.Services.AuthService AuthService
+
+<h3>Admin Dashboard</h3>
+
+@if (isUnauthorized)
+{
+    Navigation.NavigateTo("/unauthorized");
+}
+else
+{
+    @if (enquiries == null)
+    {
+        <p>No enquiries available</p>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>First Name</th>
+                    <th>Surname</th>
+                    <th>Email</th>
+                    <th>Subject</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var enquiry in enquiries)
+                {
+                    <tr>
+                        <td>@enquiry.Title</td>
+                        <td>@enquiry.FirstName</td>
+                        <td>@enquiry.Surname</td>
+                        <td>@enquiry.EmailAddress</td>
+                        <td>@enquiry.EnquirySubject</td>
+                        <td>
+                            <select @bind="enquiry.Status" @onchange"()">
+                                <option value="Open">Open</option>
+                                <option value="On Hold">On Hold</option>
+                                <option value="Closed">Closed</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger" @onclick="() => DeleteEnquiry(enquiry.Id)">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    private List<Enquiry> enquiries = new List<Enquiry>();
+    private bool isUnauthorized = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await AuthService.GetCurrentUserAsync();
+        if (user == null || user.Role != Roles.Admin)
+        {
+            isUnauthorized = true;
+            return;
+        }
+        else
+        {
+            enquiries = await EnquiryService.GetEnquiriesAsync();
+        }
+    }
+
+    private async Task UpdateStatus(Enquiry enquiry)
+    {
+        await EnquiryService.UpdateEnquiryStatusAsync(enquiry.Id, enquiry.Status);
+    }
+
+    private async Task DeleteEnquiry(Guid enquiryId)
+    {
+        await EnquiryService.DeleteEnquiryAsync(enquiryId);
+        enquiries = await EnquiryService.GetEnquiriesAsync();
+    }
+}

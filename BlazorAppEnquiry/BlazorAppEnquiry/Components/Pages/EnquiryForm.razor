@@ -1,0 +1,82 @@
+﻿@page "/enquiry"
+@inject Services.EnquiryService EnquiryService
+@using BlazorAppEnquiry.Models
+@inject NavigationManager Navigation
+
+<h3 class="text-center my-4">Submit an Enquiry</h3>
+
+<div class="container">
+    <form @onsubmit="SubmitEnquiry" method="post">
+
+        <div class="mb-3 row">
+            <label for="title" class="col-md-4 col-form-label">Title</label>
+            <div class="col-md-8">
+                <input id="title" class="form-control" @bind="enquiry.Title" placeholder="Enter your title" required />
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="firstName" class="col-md-4 col-form-label">First Name</label>
+            <div class="col-md-8">
+                <input id="firstName" class="form-control" @bind="enquiry.FirstName" placeholder="Enter your first name" required />
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="surname" class="col-md-4 col-form-label">Surname</label>
+            <div class="col-md-8">
+                <input id="surname" class="form-control" @bind="enquiry.Surname" placeholder="Enter your surname" required />
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="postalAddress" class="col-md-4 col-form-label">Postal Address</label>
+            <div class="col-md-8">
+                <input id="postalAddress" class="form-control" @bind="enquiry.PostalAddress" placeholder="Enter your postal address" required />
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="emailAddress" class="col-md-4 col-form-label">Email Address</label>
+            <div class="col-md-8">
+                <input id="emailAddress" type="email" class="form-control" @bind="enquiry.EmailAddress" placeholder="Enter your email" required />
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="details" class="col-md-4 col-form-label">Details</label>
+            <div class="col-md-8">
+                <textarea id="details" class="form-control" @bind="enquiry.Details" placeholder="Enter your enquiry details" required></textarea>
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label for="enquirySubject" class="col-md-4 col-form-label">Subject</label>
+            <div class="col-md-8">
+                <select id="enquirySubject" class="form-select" @bind="enquiry.EnquirySubject" required>
+                    <option value="GCV Labs">GCV Labs</option>
+                    <option value="GCV Invest">GCV Invest</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-3 row">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+                <button type="submit" class="btn btn-primary w-100">Submit</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@code {
+    private Enquiry enquiry = new Enquiry();
+
+    private async Task SubmitEnquiry()
+    {
+        enquiry.Id = Guid.NewGuid();
+        await EnquiryService.AddEnquiryAsync(enquiry);
+        Navigation.NavigateTo("/success");
+    }
+}
