@@ -6,7 +6,7 @@
 <h3 class="text-center my-4">Submit an Enquiry</h3>
 
 <div class="container">
-    <form @onsubmit="SubmitEnquiry" method="post">
+    <EditForm Model="@enquiry" OnValidSubmit="SubmitEnquiry" FormName="Enquiry">
 
         <div class="mb-3 row">
             <label for="title" class="col-md-4 col-form-label">Title</label>
@@ -67,7 +67,7 @@
                 <button type="submit" class="btn btn-primary w-100">Submit</button>
             </div>
         </div>
-    </form>
+    </EditForm>
 </div>
 
 @code {

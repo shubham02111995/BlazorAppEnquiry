@@ -9,7 +9,6 @@ namespace BlazorAppEnquiry.Models
         public string Username { get; set; } = string.Empty;
         [Required]
         public string Password { get; set; } = string.Empty;
-        [Required]
         public Roles Role { get; set; } = Roles.User;
     }
 
