@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorAppEnquiry", "BlazorA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorAppEnquiry.Client", "BlazorAppEnquiry\BlazorAppEnquiry.Client\BlazorAppEnquiry.Client.csproj", "{BDF03A3C-0BEB-472A-86B0-A995D40D1173}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{30323910-D95C-4132-9E24-92CED1AB2D04}"
+	ProjectSection(SolutionItems) = preProject
+		EnquiryApp Details and Instructions.pdf = EnquiryApp Details and Instructions.pdf
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

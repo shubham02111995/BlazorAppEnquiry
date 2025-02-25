@@ -3,6 +3,7 @@
 @inject BlazorAppEnquiry.Services.AuthService AuthService
 @using BlazorAppEnquiry.Models
 
+
 <h3 class="text-center my-4">Login</h3>
 
 <div class="container">
@@ -41,15 +42,22 @@
 </div>
 
 @code {
-    private User loginuser = new User();
+    [SupplyParameterFromForm]
+    private User loginuser { get; set; } = new User();
     private bool loginError = false;
+
+    protected override void OnInitialized()
+    {
+        loginuser!.Username ??= "";
+        loginuser!.Password ??= "";
+    }
 
     private async Task HandleLogin()
     {
         loginError = false;
-        Console.WriteLine($"Username: {loginuser.Username}, Password: {loginuser.Password}");
+        Console.WriteLine($"Username: {loginuser!.Username}, Password: {loginuser!.Password}");
 
-        var user = await AuthService.AuthenticateAsync(loginuser.Username, loginuser.Password);
+        var user = await AuthService.AuthenticateAsync(loginuser!.Username, loginuser!.Password);
 
         if (user != null)
         {

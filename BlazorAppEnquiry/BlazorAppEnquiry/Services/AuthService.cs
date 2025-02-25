@@ -1,20 +1,20 @@
 ﻿using BlazorAppEnquiry.Data;
 using BlazorAppEnquiry.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using System.Text.Json;
 
 namespace BlazorAppEnquiry.Services
 {
     public class AuthService
     {
         private readonly AppDbContext _context;
-        private readonly ProtectedSessionStorage _sessionStorage;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private const string SessionKey = "LoggedInUser";
 
-        public AuthService(AppDbContext context, ProtectedSessionStorage sessionStorage)
+        public AuthService(AppDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
-            _sessionStorage = sessionStorage;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<User?> AuthenticateAsync(string username, string password)
@@ -30,19 +30,32 @@ namespace BlazorAppEnquiry.Services
                     Role = user.Role
                 };
 
-                await _sessionStorage.SetAsync(SessionKey, userSession);
+                SetUserSession(userSession);
                 return userSession;
             }
 
             return null;
         }
 
-        public async Task<User?> GetCurrentUserAsync()
+        public void SetUserSession(User user)
+        {
+            var jsonUser = JsonSerializer.Serialize(user);
+            _httpContextAccessor.HttpContext?.Session.SetString("LoggedInUser", jsonUser);
+        }
+
+        public User? GetUserSession()
+        {
+            var jsonUser = _httpContextAccessor.HttpContext?.Session.GetString("LoggedInUser");
+            return jsonUser != null ? JsonSerializer.Deserialize<User>(jsonUser) : null;
+        }
+
+
+        public User? GetCurrentUser()
         {
             try
             {
-                var result = await _sessionStorage.GetAsync<User>(SessionKey);
-                return result.Success ? result.Value : null;
+                var result = GetUserSession();
+                return result;
             }
             catch
             {
@@ -50,9 +63,9 @@ namespace BlazorAppEnquiry.Services
             }
         }
 
-        public async Task LogoutAsync()
+        public  void LogoutAsync()
         {
-            await _sessionStorage.DeleteAsync(SessionKey);
+            _httpContextAccessor.HttpContext?.Session.Remove("LoggedInUser");
         }
     }
 }

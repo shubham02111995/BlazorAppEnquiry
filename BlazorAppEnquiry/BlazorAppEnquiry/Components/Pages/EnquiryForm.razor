@@ -11,53 +11,53 @@
         <div class="mb-3 row">
             <label for="title" class="col-md-4 col-form-label">Title</label>
             <div class="col-md-8">
-                <input id="title" class="form-control" @bind="enquiry.Title" placeholder="Enter your title" required />
+                <InputText id="title" class="form-control" @bind-Value="enquiry.Title" placeholder="Enter your title" required />
             </div>
         </div>
 
         <div class="mb-3 row">
             <label for="firstName" class="col-md-4 col-form-label">First Name</label>
             <div class="col-md-8">
-                <input id="firstName" class="form-control" @bind="enquiry.FirstName" placeholder="Enter your first name" required />
+                <InputText id="firstName" class="form-control" @bind-Value="enquiry.FirstName" placeholder="Enter your first name" required />
             </div>
         </div>
 
         <div class="mb-3 row">
             <label for="surname" class="col-md-4 col-form-label">Surname</label>
             <div class="col-md-8">
-                <input id="surname" class="form-control" @bind="enquiry.Surname" placeholder="Enter your surname" required />
+                <InputText id="surname" class="form-control" @bind-Value="enquiry.Surname" placeholder="Enter your surname" required />
             </div>
         </div>
 
         <div class="mb-3 row">
             <label for="postalAddress" class="col-md-4 col-form-label">Postal Address</label>
             <div class="col-md-8">
-                <input id="postalAddress" class="form-control" @bind="enquiry.PostalAddress" placeholder="Enter your postal address" required />
+                <InputText id="postalAddress" class="form-control" @bind-Value="enquiry.PostalAddress" placeholder="Enter your postal address" required />
             </div>
         </div>
 
         <div class="mb-3 row">
             <label for="emailAddress" class="col-md-4 col-form-label">Email Address</label>
             <div class="col-md-8">
-                <input id="emailAddress" type="email" class="form-control" @bind="enquiry.EmailAddress" placeholder="Enter your email" required />
+                <InputText id="emailAddress" type="email" class="form-control" @bind-Value="enquiry.EmailAddress" placeholder="Enter your email" required />
             </div>
         </div>
 
         <div class="mb-3 row">
             <label for="details" class="col-md-4 col-form-label">Details</label>
             <div class="col-md-8">
-                <textarea id="details" class="form-control" @bind="enquiry.Details" placeholder="Enter your enquiry details" required></textarea>
+                <InputTextArea id="details" class="form-control" @bind-Value="enquiry.Details" placeholder="Enter your enquiry details" required></InputTextArea>
             </div>
         </div>
 
         <div class="mb-3 row">
             <label for="enquirySubject" class="col-md-4 col-form-label">Subject</label>
             <div class="col-md-8">
-                <select id="enquirySubject" class="form-select" @bind="enquiry.EnquirySubject" required>
+                <InputSelect id="enquirySubject" class="form-select" @bind-Value="enquiry.EnquirySubject" required>
                     <option value="GCV Labs">GCV Labs</option>
                     <option value="GCV Invest">GCV Invest</option>
                     <option value="Other">Other</option>
-                </select>
+                </InputSelect>
             </div>
         </div>
 
@@ -71,11 +71,23 @@
 </div>
 
 @code {
-    private Enquiry enquiry = new Enquiry();
+    [SupplyParameterFromForm]
+    private Enquiry enquiry { get; set; } = new Enquiry();
+
+    protected override void OnInitialized()
+    {
+        enquiry!.Title ??= "";
+        enquiry!.FirstName ??= "";
+        enquiry!.Surname ??= "";
+        enquiry!.PostalAddress ??= "";
+        enquiry!.EmailAddress ??= "";
+        enquiry!.EnquirySubject ??= "";
+    }
 
     private async Task SubmitEnquiry()
     {
-        enquiry.Id = Guid.NewGuid();
+        enquiry!.Id = Guid.NewGuid();
+        enquiry!.Status = "Open";
         await EnquiryService.AddEnquiryAsync(enquiry);
         Navigation.NavigateTo("/success");
     }

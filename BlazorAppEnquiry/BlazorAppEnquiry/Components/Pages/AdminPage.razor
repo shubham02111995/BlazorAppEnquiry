@@ -63,7 +63,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var user = await AuthService.GetCurrentUserAsync();
+        var user = AuthService.GetCurrentUser();
         if (user == null || user.Role != Roles.Admin)
         {
             isUnauthorized = true;
