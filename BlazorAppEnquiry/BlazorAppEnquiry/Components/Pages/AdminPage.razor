@@ -41,14 +41,19 @@ else
                         <td>@enquiry.EmailAddress</td>
                         <td>@enquiry.EnquirySubject</td>
                         <td>
-                            <select @bind="enquiry.Status" @onchange"()">
+                            <EditForm Model="enquiry" onchange="@(() => UpdateStatus(enquiry))" FormName="@($"AdminFormUpdate_{enquiry.Id}")">
+                                <InputSelect id="enquiryStatus" class="form-select" @bind-Value="enquiry.Status">
                                 <option value="Open">Open</option>
                                 <option value="On Hold">On Hold</option>
                                 <option value="Closed">Closed</option>
-                            </select>
+                            </InputSelect>
+                            </EditForm>
                         </td>
                         <td>
-                            <button class="btn btn-danger" @onclick="() => DeleteEnquiry(enquiry.Id)">Delete</button>
+                            <EditForm Model="enquiry" OnSubmit="@(() => DeleteEnquiry(enquiry.Id))" FormName="@($"AdminFormDelete_{enquiry.Id}")">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </EditForm>
+
                         </td>
                     </tr>
                 }
@@ -78,11 +83,13 @@ else
     private async Task UpdateStatus(Enquiry enquiry)
     {
         await EnquiryService.UpdateEnquiryStatusAsync(enquiry.Id, enquiry.Status);
+
     }
 
     private async Task DeleteEnquiry(Guid enquiryId)
     {
         await EnquiryService.DeleteEnquiryAsync(enquiryId);
         enquiries = await EnquiryService.GetEnquiriesAsync();
+        Navigation.NavigateTo("/admin");
     }
 }
